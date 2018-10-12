@@ -5,7 +5,7 @@
 
 <title>embedding files in python scripts</title>
 
-<link rel="stylesheet" href="/assets/css/style.css?v=4afdc47e3c73cdb184a740fd5bc72e50b1227787">
+<link rel="stylesheet" href="/assets/css/style.css?v=967fd2fd62f7a5d1fbf461e72fa3680969e984d3">
 
 <div class="container-lg px-3 my-5 markdown-body">
   <h1>embedding files in python scripts</h1>
@@ -14,14 +14,14 @@
 examples should be what you have now:</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">"data.csv"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-  <span class="c"># ...</span>
-</code></pre></div></div>
+  <span class="c1"># ...
+</span></code></pre></div></div>
 
 <p>… or …</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">"data.csv"</span><span class="p">)</span>
-<span class="c"># ...</span>
-<span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="c1"># ...
+</span><span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>The code above can’t stand on it’s own. It depends on the <code class="highlighter-rouge">data.csv</code> file which other people won’t have on their computers.
@@ -29,13 +29,13 @@ Many people would tend to attach the file to the question, but often there is a 
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">io</span>
 
-<span class="c"># notice the backslash before the newline</span>
-<span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s">"""</span><span class="se">\
+<span class="c1"># notice the backslash before the newline
+</span><span class="n">f</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="s">"""</span><span class="se">\
 </span><span class="s">FILE CONTENT HERE
 """</span><span class="p">)</span>
 
-<span class="c"># ...</span>
-</code></pre></div></div>
+<span class="c1"># ...
+</span></code></pre></div></div>
 
 <p>This won’t work in every senario, if your file is huge or containes binary data it might not be a good idea to embed it.</p>
 
