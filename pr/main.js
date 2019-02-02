@@ -1,63 +1,52 @@
-const output = document.getElementById("output");
-const welcome = document.getElementById("welcome");
-const error = document.getElementById("error");
+import {decodeTarget, getSource} from "./loader.js";
 
-const params = new URLSearchParams(window.location.search);
+function abbreviate(url) {
+    const replace = [
+        ["https://raw.githubusercontent.com/asynts/stack-overflow/master/", "!"],
+        [new URL("/so/", window.location.href).href, "!"],
+        [new URL("/ref/", window.location.href).href, "X"]
+    ];
 
-if(window.location.hash.length > 0) {
-  let url = window.location.hash.substr(1);
-  const lang = params.get("lang");
-
-  if(url.startsWith("#")) {
-    if(url.startsWith("#X")) {
-      url = `../ref/${url.substr(2)}`;
-    } else {
-      url = `../so/${url.substr(1)}`;
+    for(const [key, val] of replace) {
+        if(url.startsWith(key)) {
+            return val + url.substr(key.length);
+        }
     }
-  }
 
-  if(lang !== null) {
-    output.classList.add(`lang-${lang}`);
-  }
-
-  const headers = new Headers();
-  headers.append("Accept", "text/plain");
-
-  const request = new Request(url, {
-    method: "GET",
-    cache: "no-cache",
-    headers
-  });
-
-  fetch(request)
-    .then(response => response.text())
-    .then(text => {
-      output.innerText = text;
-      output.classList.remove("prettyprinted");
-      PR.prettyPrint();
-    }).catch(err => err.innerText = err);
-} else {
-  welcome.hidden = false;
+    return url;
 }
 
-const urlin = document.getElementById("url-in");
-const urlout = document.getElementById("url-out");
+function updateWelcome() {
+    const urlinElem = document.getElementById("urlin");
+    const urloutElem = document.getElementById("urlout");
 
-function update() {
-  let url = urlin.value;
+    let url = new URL(window.location.href);
+    url.hash = "#" + abbreviate(urlinElem.value.trim());
 
-  if(url.startsWith("https://raw.githubusercontent.com/asynts/stack-overflow/master/")) {
-    url = url.replace("https://raw.githubusercontent.com/asynts/stack-overflow/master/", "#");
-  } else if(url.startsWith("https://asynts.github.io/so/")) {
-    url = url.replace("https://asynts.github.io/so/", "#");
-  }
-
-  url = window.location.protocol + "//" + window.location.host + "/pr/#" + url;
-
-  urlout.innerText = url;
-  urlout.href = url;
+    urloutElem.innerText = url.href;
+    urloutElem.href = url.href;
 }
 
-urlin.onkeyup = update;
-update();
+document.body.onload = () => {
+    if(window.location.hash.length == 0) {
+        document.getElementById("welcome").hidden = false;
+        document.getElementById("urlin").onkeyup = updateWelcome;
+        updateWelcome();
+        return;
+    }
 
+    const outputElem = document.getElementById("output");
+    const lang = new URLSearchParams(window.location.search).get("lang");
+
+    getSource(decodeTarget(), source => {
+        outputElem.innerHTML = PR.prettyPrintOne(source, lang)
+    });
+};
+
+// some browsers don't refresh if only the fragment changed
+const prev = window.location.hash;
+setInterval(() => {
+    if(prev != window.location.hash) {
+        window.location.reload(true);
+    }
+}, 500);
